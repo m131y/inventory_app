@@ -46,4 +46,13 @@ public class StockController {
         return ResponseEntity.noContent().build();
     }
 
+    @PostMapping("/transfer")
+    public void transfer(
+            @RequestParam Long productId,
+            @RequestParam Long srcWarehouseId,
+            @RequestParam Long destWarehouseId,
+            @RequestParam int quantity
+    ) {
+        stockService.transferStock(productId, srcWarehouseId, destWarehouseId, quantity);
+    }
 }

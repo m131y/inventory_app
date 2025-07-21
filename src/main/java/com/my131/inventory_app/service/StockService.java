@@ -67,4 +67,29 @@ public class StockService {
     public void delete(Long id) {
         stockRepository.deleteById(id);
     }
+
+    public void transferStock(Long productId, Long srcWarehouseId, Long destWarehouseId, int quantity) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new NoSuchElementException("제품을 찾을 수 없습니다."));
+        Warehouse srcWarehouse = warehouseRepository.findById(srcWarehouseId)
+                .orElseThrow(() -> new NoSuchElementException("출발 창고를 찾을 수 없습니다."));
+        Warehouse destWarehouse = warehouseRepository.findById(destWarehouseId)
+                .orElseThrow(() -> new NoSuchElementException("도착 창고를 찾을 수 없습니다."));
+
+        Stock srcStock = stockRepository.findByProductIdAndWarehouseId(productId, srcWarehouseId)
+                .orElseThrow(() -> new NoSuchElementException("출발 재고가 존재하지 않습니다."));
+
+        if(srcStock.getQuantity() < quantity) {
+            throw new IllegalStateException("출발 재고가 부족합니다.");
+        }
+        srcStock.setQuantity(srcStock.getQuantity() - quantity);
+
+        Stock destStock = stockRepository.findByProductIdAndWarehouseId(productId,destWarehouseId)
+                .orElse(new Stock());
+        destStock.setProduct(product);
+        destStock.setWarehouse(destWarehouse);
+        destStock.setQuantity(destStock.getQuantity() == null ? quantity : destStock.getQuantity() + quantity);
+
+        stockRepository.saveAll(List.of(srcStock, destStock));
+    }
 }
