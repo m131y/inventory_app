@@ -40,8 +40,12 @@ public class WarehouseService {
 
     public Warehouse update(Long id, WarehouseDto warehouseDto) {
         Warehouse warehouse = getById(id);
-        warehouse.setName(warehouseDto.getName());
-        warehouse.setLocation(warehouseDto.getLocation());
+        if (warehouseDto.getName() != null && !warehouseDto.getName().isBlank()) {
+            warehouse.setName(warehouseDto.getName());
+        }
+        if (warehouseDto.getLocation() != null && !warehouseDto.getLocation().isBlank()) {
+            warehouse.setLocation(warehouseDto.getLocation());
+        }
 
         return warehouseRepository.save(warehouse);
     }
