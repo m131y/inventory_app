@@ -20,16 +20,20 @@ public class WarehouseService {
     private final WarehouseRepository warehouseRepository;
     private final WarehouseQueryRepository queryRepository;
 
+    // 단일 창고 조회
     public Warehouse getById(Long id) {
         return warehouseRepository.findById(id)
                 .orElseThrow(()-> new NoSuchElementException("제품을 찾을 수 없습니다. id =" + id));
     }
 
-    // condition == dto
+    // 창고 검색 조회
+    // QueryDSL 기반 동적 조건 검색
     public List<Warehouse> search(WarehouseSearchCondition condition) {
-        return queryRepository.search(condition);
+        // condition 으로 검색한 warehouse 목록을 반환
+         return queryRepository.search(condition);
     }
 
+    // 창고 등록
     public Warehouse create(WarehouseDto warehouseDto) {
         Warehouse warehouse = new Warehouse();
         warehouse.setName(warehouseDto.getName());
@@ -38,6 +42,7 @@ public class WarehouseService {
         return warehouseRepository.save(warehouse);
     }
 
+    // 창고 수정
     public Warehouse update(Long id, WarehouseDto warehouseDto) {
         Warehouse warehouse = getById(id);
         if (warehouseDto.getName() != null && !warehouseDto.getName().isBlank()) {
@@ -50,6 +55,7 @@ public class WarehouseService {
         return warehouseRepository.save(warehouse);
     }
 
+    // 창고 삭제
     public void delete(Long id) {
         warehouseRepository.deleteById(id);
     }
